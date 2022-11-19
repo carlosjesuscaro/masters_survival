@@ -34,3 +34,10 @@ summary(covid_formatted)
 covid_formatted$gender
 covid_formatted$death_status
 
+# Frequency tables
+with(covid_formatted, table(death_status, gender))
+with(covid_formatted, round(100*prop.table(table(death_status, gender), 2), 2))
+
+# Independence test
+with(covid_formatted, chisq.test(death_status, gender))
+with(covid_formatted, fisher.test(death_status, gender))
