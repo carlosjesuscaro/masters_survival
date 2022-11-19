@@ -29,3 +29,8 @@ covid_formatted <- covid %>% mutate(reporting_date = as_date(reporting_date),
                                death_date = as.Date(ifelse(!death %in% c("0", "1"), as.Date(death, format = "%m/%d/%y", origin = "1970-01-01"), NA), origin = "1970-01-01"),
                                gender = factor(gender, levels = c("female", "male")))
 summary(covid_formatted)
+
+# Checking if death_status and gender are independent
+covid_formatted$gender
+covid_formatted$death_status
+
