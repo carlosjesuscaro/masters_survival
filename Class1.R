@@ -102,3 +102,8 @@ glm(death_status ~ age_cat, data = covid_cat, family = 'binomial') %>%
   tidy(conf.int = TRUE) %>%
   mutate(OR = exp(estimate), OR.L95 = exp(conf.low), OR.U95 = exp(conf.high))
 # Reporting: the odds of people older than 70 years old is 7.5 times higher of dying of covid
+
+# Does th effect of age ADD to the effect of gender?
+glm(death_status ~ age_decades + gender, data = covid_ageDec, family = 'binomial') %>%
+  tidy(conf.int = TRUE) %>%
+  mutate(OR = exp(estimate), OR.L95 = exp(conf.low), OR.U95 = exp(conf.high))
