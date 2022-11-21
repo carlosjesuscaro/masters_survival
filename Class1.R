@@ -46,7 +46,7 @@ with(covid_formatted, fisher.test(death_status, gender))
 # Observations:
 # In both cases, the p-value is larger than 5% so the variables are independent
 
-# Preparing the data for logistic regression
+# Preparing the data for logistic regression based on gender (binaryP: male or female)
 covid_data <- covid_formatted %>% select(death_status, gender) %>% na.omit()
 summary(glm(death_status ~ gender, data = covid_data, family = 'binomial'))
 # Observations:
@@ -75,5 +75,35 @@ glm(death_status~gender, data = covid_data, family = 'binomial') %>%
 # 3. The confidence interval is (95% confidence):
 # - lower bound: 1.00
 # - upper bound: 2.84
-# ** The reason to use the exponential value of beta_one is to show the data at the scale of the observation
+# ** The reason to use the exponential value of beta_one is to show the data at the scale of the observation
 
+# Logistic regression based on age
+glm(death_status ~ age, data = covid_formatted, family = 'binomial') %>%
+  tidy(conf.int = TRUE) %>%
+  mutate(OR = exp(estimate), OR.L95 = exp(conf.low), OR.U95 = exp(conf.high))
+
+# Reporting:
+# 1. The risk of dying by COVID based on age is significant
+# 2. The estimate of beta_one is 0.0799 which means that the observation to variable ratio is e^0.0799 = 1.08.
+# In other words, every year in age represents an increase in 8% chances to die
+
+# Trying with age based on decades
+covid_ageDec <- mutate(covid_formatted, age_decades = age / 10)
+glm(death_status ~ age_decades, data = covid_ageDec, family = 'binomial') %>%
+  tidy(conf.int = TRUE) %>%
+  mutate(OR = exp(estimate), OR.L95 = exp(conf.low), OR.U95 = exp(conf.high))
+# The observation to variable ratio shows that every additional decade more than doubles the chances of
+# dying of covid
+
+# Analyzing with age treated as a categorical variable: older than 70 y.o or not
+covid_cat <- mutate(covid_formatted, age_cat = factor(age > 70, levels = c(FALSE, TRUE), labels = c("<=70", ">70")))
+with(covid_cat, table(death_status, age_cat))
+glm(death_status ~ age_cat, data = covid_cat, family = 'binomial') %>%
+  tidy(conf.int = TRUE) %>%
+  mutate(OR = exp(estimate), OR.L95 = exp(conf.low), OR.U95 = exp(conf.high))
+# Reporting: the odds of people older than 70 years old is 7.5 times higher of dying of covid
+
+# Does th effect of age ADD to the effect of gender?
+glm(death_status ~ age_decades + gender, data = covid_ageDec, family = 'binomial') %>%
+  tidy(conf.int = TRUE) %>%
+  mutate(OR = exp(estimate), OR.L95 = exp(conf.low), OR.U95 = exp(conf.high))
