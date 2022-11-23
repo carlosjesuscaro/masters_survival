@@ -9,3 +9,9 @@ dat <-  data.frame(ratID = paste0("rat", 1:5),
 
 fit.KM <- survfit(Surv(time, status)~1, data = dat)
 summary(fit.KM)
+# Observations
+# Status: 0 means censored and 1 means the event happened (not censored)
+plot(fit.KM, mark.time = TRUE,
+     main = "Kaplan Meier estimator",
+     ylab = "Survival probability",
+     xlab = "Time (seconds)")
