@@ -15,3 +15,10 @@ plot(fit.KM, mark.time = TRUE,
      main = "Kaplan Meier estimator",
      ylab = "Survival probability",
      xlab = "Time (seconds)")
+
+# The median is the time when half the rats had the event
+fit.KM
+
+# Plotting the CDF
+plot(fit.KM, fun = "F")
+# CDF = 1 - Kaplan-Meir estimator
