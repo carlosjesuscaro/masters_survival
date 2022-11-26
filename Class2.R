@@ -78,10 +78,10 @@ d <- read_csv("~/Downloads/DSTI_survey.csv") %>%
        intStop = as.Date(ifelse(is.na(intStop), as.Date(Timestamp), intStop),
                          origin = "1970-01-01"),
        tti_m = as.numeric(difftime(intStop, intStart, units = "days")) / 30.5,
-       status = intEvers
+       status = intEver
      ) %>%
      select(tti_m, status, age, sex, cohort, pre_pandemic, education,
             edu_math, children) %>%
-     filter(tti_m > 0)
+     filter(tti_m >= 0)
 
 d
