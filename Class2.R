@@ -84,4 +84,26 @@ d <- read_csv("~/Downloads/DSTI_survey.csv") %>%
             edu_math, children) %>%
      filter(tti_m >= 0)
 
+# Data is alreadt clean
 d
+summary(d)
+
+# Overall TTI (time to internship)
+fit <- survfit(Surv(tti_m, status)~1, data = d)
+fit
+plot(fit, fun = "F", xlab = "months", ylab = "Cumulated probability of finding internship")
+plot(fit, xlab = "months", ylab = "Cumulated probability of finding internship")
+# Observations
+# fun = "F" ==> it is going to plot 1 - Surv
+
+# Grouping: Having children
+d %>%
+  group_by(children) %>%
+  summarize(surv = get_surv_table(tti_m, status)) %>%
+  unnest(surv) %>%
+  ggplot(aes(x = time, y = incidence, color = children)) +
+    geom_step(lwd = 2) +
+    xlab("Time (months)") +
+    ylab("Cumulatibve probability of finding an internship") +
+    theme_bw(base_size = 18) +
+    theme(legend.pos = "top")
