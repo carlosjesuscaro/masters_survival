@@ -120,6 +120,29 @@ d0 <- d_dirty %>%
 table(d0$cohort)
 barplot(table(d0$cohort))
 
-# Pandemic and children
-summary(coxph(Surv(tti_m, status) ~ pre_pandemic + children, data = d))
+# Comparing survival functions between 2 groups
+survdiff(Surv(tti_m, status) ~ children, data = d)
+# Here we are comparing the survival between the groups of with or without children
+# The p-value is 5% so we can reject H0 and say that there is signifcance difference
 
+# Survival function based on groups
+surv_groups <- survfit(Surv(tti_m, status) ~ children, data = d)
+plot(surv_groups, col = 1:2)
+surv_groups
+# This is plotting the survival function for 2 groups: with and without children
+# The order of the table matches the order of the colors
+
+# An alternative solution:
+d %>%
+  group_by(children) %>%
+  summarize(surv = get_surv_table(tti_m, status)) %>%
+  unnest(surv) %>%
+  ggplot(aes(x = time, y = incidence)) +
+  facet_grid(~ children) +
+  geom_step(lwd = 2) +
+  xlab("Time (months)") +
+  ylab("Cumulatibve probability of finding an internship") +
+  theme_bw(base_size = 18) +
+  theme(legend.pos = "top")
+
+# Another alternative solution is to use survminer
