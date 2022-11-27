@@ -107,3 +107,19 @@ d %>%
     ylab("Cumulatibve probability of finding an internship") +
     theme_bw(base_size = 18) +
     theme(legend.pos = "top")
+
+# Experimenting with the dataset
+d_dirty <- read_csv("~/Downloads/DSTI_survey.csv")
+d_dirty$Cohort
+table(d_dirty$Cohort)
+barplot(table(d_dirty$Cohort))
+
+cohort_levels <- paste(c("S", "A"), rep(15:20, each = 2), sep = "")
+d0 <- d_dirty %>%
+   mutate(cohort = factor(Cohort, levels =  cohort_levels))
+table(d0$cohort)
+barplot(table(d0$cohort))
+
+# Pandemic and children
+summary(coxph(Surv(tti_m, status) ~ pre_pandemic + children, data = d))
+
