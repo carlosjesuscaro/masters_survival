@@ -10,6 +10,9 @@ dat <-  data.frame(ratID = paste0("rat", 1:5),
 sum(dat$failure)
 
 dat <- rename(dat, x = group)
+# x = 0 means rat not being sleep deprived
+# x = 1 means rat being sleep deprived
+
 dat.events <- subset(dat, failure == 1)
 
 # Lets define the partial (log-)likelihood function
@@ -41,4 +44,12 @@ summary(fit.ML)
 # The ratio between rats been sleep deprived or not is exp(beta)
 exp(fit.ML$estimate)
 
+# With the `coxph` function:
+fit.cph <- coxph(Surv(time, failure) ~ x, data = dat)
+summary(fit.cph)
+# the p-value comes from the Wald test. H0 = beta=0
 
+# Observations
+# The hazard (risk) in sleep deprived is lower (quantified by beta)
+# The ratio between being sleep deprived or not is:
+# exp(beta) ==> 0.58
