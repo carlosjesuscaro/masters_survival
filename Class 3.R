@@ -53,3 +53,15 @@ summary(fit.cph)
 # The hazard (risk) in sleep deprived is lower (quantified by beta)
 # The ratio between being sleep deprived or not is:
 # exp(beta) ==> 0.58
+
+# Another example
+dat <- data.frame(time = c(6, 7, 10, 15, 19, 25),
+                  event = c(1, 0, 1, 1, 0, 1),
+                  age = c(67, 62, 34, 41, 46, 28))
+
+fit <- coxph(Surv(time, event) ~ age, data = dat)
+summary(fit)
+# Interpretation
+# 1. p-value is 30% so the efefct of age on risk is not significant
+# 2. estimated_beta > 0: to higher age, higher risk (in other words. lower
+# time to event)
