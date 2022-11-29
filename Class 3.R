@@ -145,3 +145,45 @@ coxph(Surv(tti_m, status) ~ education, data = d) |> summary()
 d3_relevelled <- d |> mutate(education = factor(education)) |>
   mutate(education = relevel(education, ref = "math"))
 
+# Case study: pharmacoSmoking dataset
+
+library(tidyverse)
+library(asaur)
+library(survival)
+dat <- pharmacoSmoking
+head(dat)
+
+table(dat$grp)
+
+table(dat$gender)
+dat$white <- (dat$race == "white") + 0
+dat$ft <- (dat$employment == "ft") + 0
+
+set.seed(4321)
+i <- seq(nrow(dat))
+i.training <- sample(i, size = floor(nrow(dat) / 2), replace = FALSE)
+i.testing <- setdiff(i, i.training)
+d.training <- dat[i.training, ]
+d.testing <- dat[i.testing, ]
+
+# Effect of the treatment
+fit.KM <- sc
+print(fit.KM)
+plot(fit.KM, col = 1:2)
+# Validating with logrank test
+survdiff(Surv(ttr, relapse) ~ grp, data = dat)
+# The difference is statistically significant
+
+# Model training
+fit.KM <- coxph(Surv(ttr, relapse) ~ grp, data = dat)
+summary(fit.KM)
+# Observations
+# 1. p-value is very small so it is significant different
+# 2. patchonly treatement is 83.1% more chances to relapse
+
+# Flipping the reference
+dat2 <- mutate(dat, grp2 = relevel(factor(grp), "patchOnly"))
+fit.KM2 <- coxph(Surv(ttr, relapse) ~ grp2, data = dat2)
+summary(fit.KM2)
+# The chances of relapsing with the combination method is half than
+# with patch only
