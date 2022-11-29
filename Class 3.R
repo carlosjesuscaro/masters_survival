@@ -167,7 +167,7 @@ d.training <- dat[i.training, ]
 d.testing <- dat[i.testing, ]
 
 # Effect of the treatment
-fit.KM <- sc
+fit.KM <- survfit(Surv(ttr, relapse) ~ grp, data = dat)
 print(fit.KM)
 plot(fit.KM, col = 1:2)
 # Validating with logrank test
