@@ -132,6 +132,16 @@ d
 
 # Building the covariate model
 summary(coxph(Surv(tti_m, status) ~ children + age, data = d))
-
+# Ploting
 ggplot(d, aes(x = children, y = age)) + geom_boxplot()
+
+# Covariates with more than 2 levels
+d |> count(education) |> arrange(desc(n))
+coxph(Surv(tti_m, status) ~ education, data = d) |> summary()
+# The output is comparing the ratio with level that was ommited as it used
+# to be the reference
+
+# If we want to choose the reference level manually
+d3_relevelled <- d |> mutate(education = factor(education)) |>
+  mutate(education = relevel(education, ref = "math"))
 
