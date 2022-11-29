@@ -155,17 +155,6 @@ head(dat)
 
 table(dat$grp)
 
-table(dat$gender)
-dat$white <- (dat$race == "white") + 0
-dat$ft <- (dat$employment == "ft") + 0
-
-set.seed(4321)
-i <- seq(nrow(dat))
-i.training <- sample(i, size = floor(nrow(dat) / 2), replace = FALSE)
-i.testing <- setdiff(i, i.training)
-d.training <- dat[i.training, ]
-d.testing <- dat[i.testing, ]
-
 # Effect of the treatment
 fit.KM <- survfit(Surv(ttr, relapse) ~ grp, data = dat)
 print(fit.KM)
@@ -187,3 +176,27 @@ fit.KM2 <- coxph(Surv(ttr, relapse) ~ grp2, data = dat2)
 summary(fit.KM2)
 # The chances of relapsing with the combination method is half than
 # with patch only
+
+# Using other variables available
+table(dat$gender)
+dat$white <- (dat$race == "white") + 0
+dat$ft <- (dat$employment == "ft") + 0
+
+coxph(Surv(ttr, relapse) ~ I(age/10) + gender + white + ft, data =  dat) |>
+  summary()
+# Observations
+# Age and working status are significant factors, each can affect the chances to
+# relapxse by almost 50% (age is in decades)
+
+# Adding the interaction of covariates
+coxph(Surv(ttr, relapse) ~ grp + ft + grp:ft, data = dat) |>
+  summary()
+# Interpretation is more difficult in case the interaction has a significant
+# difference
+
+set.seed(4321)
+i <- seq(nrow(dat))
+i.training <- sample(i, size = floor(nrow(dat) / 2), replace = FALSE)
+i.testing <- setdiff(i, i.training)
+d.training <- dat[i.training, ]
+d.testing <- dat[i.testing, ]
