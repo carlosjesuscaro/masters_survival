@@ -62,4 +62,22 @@ d <- read_csv("~/Downloads/DSTI_survey.csv") %>%
 d
 
 # Building the covariate model
-summary(coxph(Surv(tti_m, status) ~ sex + age, data = d))
+M1 <- coxph(Surv(tti_m, status) ~ sex + age, data = d)
+summary(M1)
+
+# Introducing new data
+d_new <- tribble(
+  ~name, ~age, ~sex,
+  "Antonio", 38, "Male",
+  "Carine", 40, "Female"
+)
+d_new
+
+# Prediction
+d_new$lp <- predict(M1, newdata = d_new, type = 'lp')
+d_new
+d_new |> arrange(lp)
+# Observations
+# There is a score that y itself is meaningful. However, when compared to
+# other values is a rank defining who may take the longest or the shortest
+# time to the event
