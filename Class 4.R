@@ -81,3 +81,16 @@ d_new |> arrange(lp)
 # There is a score that y itself is meaningful. However, when compared to
 # other values is a rank defining who may take the longest or the shortest
 # time to the event
+
+# Calculating a full predicition for new data (not relative to others)
+d_luigi <- filter(d_new, name == "Carine")
+M1.surv <- survfit(M1, newdata = d_luigi)
+M1.surv
+# Ploting the survival curve
+plot(M1.surv)
+
+# Calculatin the absolute prediction for each element of the new data
+M1.surv <- survfit(M1, newdata = d_new)
+M1.surv
+# Ploting the survival curve
+plot(M1.surv, col = 1:2)
