@@ -94,3 +94,15 @@ M1.surv <- survfit(M1, newdata = d_new)
 M1.surv
 # Ploting the survival curve
 plot(M1.surv, col = 1:2)
+
+# Case study: smoking prediction based on DSTI survey
+d_testing <- read_csv("~/Downloads/DSTI_survey.csv") |>
+  mutate(
+    Timestamp = as.POSIXct(Timestamp, format = "%d/%m/%Y %H:%M:%OS"),
+    age = year(Timestamp) - `Year of birth`,
+    sex = factor(Sex, levels = c("Female", "Male")),
+    smkEver = `Were you ever a smoker?` != "No",
+    smkAge = ifelse(smkEver, `Year when first started smoking` -
+      `Year of birth`, age)) |>
+  transmute(age, gender = sex, smkEver, smkAge)
+d_testing
