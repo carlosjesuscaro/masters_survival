@@ -5,6 +5,7 @@ library(tidyverse)
 library(lubridate)
 library(broom)
 library(survival)
+library(asaur)
 
 # Utility functions and definitions
 as_tibble.survfit <- function(x){
@@ -172,4 +173,20 @@ d_bin <- d_testing |> mutate(
 d_bin
 # Now this is a classification problem. However, the challenge is that
 # now we are limiting ourselves to a specific duration
+
+# Choosing relevant categorical variables
+
+# Loading the data
+data_smk <- pharmacoSmoking
+
+# Building the models
+m0 <- coxph(Surv(ttr, relapse) ~ 1, data = data_smk)
+m1 <- coxph(Surv(ttr, relapse) ~ ageGroup4, data = data_smk)
+m2 <- coxph(Surv(ttr, relapse) ~ employment, data = data_smk)
+m3 <- coxph(Surv(ttr, relapse) ~ ageGroup4 + employment, data = data_smk)
+
+anova(m2, m3)
+# small p-value, ageGroup4 is a significant variable
+anova(m1, m3)
+# large p-value, employment is not a significan variable and can be dropped
 
